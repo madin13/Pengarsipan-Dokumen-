@@ -1,0 +1,30 @@
+@import "tailwindcss";
+
+@theme {
+  --color-hijau: #3f8a2f;
+  --color-hijau-tua: #1f5a1a;
+  --color-oranye: #f39c1f;
+}
+
+body {
+  margin: 0;
+  font-family: "Inter", system-ui, sans-serif;
+}
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #area-cetak,
+  #area-cetak * {
+    visibility: visible;
+  }
+  #area-cetak {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    max-width: none;
+    box-shadow: none;
+  }
+}
