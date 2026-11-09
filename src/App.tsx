@@ -10,9 +10,9 @@ import UploadDokumen from "./pages/UploadDokumen";
 import CariDokumen from "./pages/CariDokumen";
 import LaporanArsip from "./pages/LaporanArsip";
 import CetakLaporan from "./pages/CetakLaporan";
+import ManajemenUser from "./pages/ManajemenUser";
 import DashboardLayout from "./layouts/DashboardLayout";
 
-// Halaman sementara untuk menu yang belum dibuat
 function Placeholder() {
   return (
     <div className="bg-white rounded-xl p-8 text-gray-600 shadow-sm">
@@ -37,6 +37,7 @@ function App() {
         <Route path="/cari-dokumen" element={<CariDokumen />} />
         <Route path="/laporan-arsip" element={<LaporanArsip />} />
         <Route path="/laporan-arsip/cetak" element={<CetakLaporan />} />
+        <Route path="/manajemen-user" element={<ManajemenUser />} />
         <Route path="*" element={<Placeholder />} />
       </Route>
     </Routes>

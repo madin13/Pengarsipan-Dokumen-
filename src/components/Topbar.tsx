@@ -7,11 +7,13 @@ import {
   ambilNotifikasi, tandaiDibaca, tandaiSemuaDibaca, hapusSemua,
   waktuRelatif, EVENT_NOTIFIKASI, type Notifikasi,
 } from "../notifikasiStore";
-import { daftarPengguna, gantiPengguna, usePengguna } from "../userStore";
+import { gantiPengguna, infoPeran, useDaftarAkun, usePengguna } from "../userStore";
 
 export default function Topbar({ onToggle }: { onToggle: () => void }) {
   const navigate = useNavigate();
   const pengguna = usePengguna();
+  const info = infoPeran[pengguna.peran];
+  const semuaAkun = useDaftarAkun().filter((a) => a.aktif);
 
   const [daftar, setDaftar] = useState<Notifikasi[]>(() => ambilNotifikasi());
   const [bukaNotif, setBukaNotif] = useState(false);
@@ -29,7 +31,6 @@ export default function Topbar({ onToggle }: { onToggle: () => void }) {
     };
   }, []);
 
-  // Tutup dropdown saat klik di luar
   useEffect(() => {
     const klikLuar = (e: MouseEvent) => {
       const t = e.target as Node;
@@ -48,8 +49,8 @@ export default function Topbar({ onToggle }: { onToggle: () => void }) {
     navigate(n.ke);
   };
 
-  const pilihAkun = (peran: (typeof daftarPengguna)[number]["peran"]) => {
-    gantiPengguna(peran);
+  const pilihAkun = (id: number) => {
+    gantiPengguna(id);
     setBukaAkun(false);
     navigate("/dashboard");
   };
@@ -63,7 +64,7 @@ export default function Topbar({ onToggle }: { onToggle: () => void }) {
     <header className="sticky top-0 z-20 bg-white shadow-sm px-4 md:px-6 py-3 flex items-center justify-between">
       <button
         onClick={onToggle}
-        className="w-10 h-10 rounded-lg bg-hijau hover:bg-hijau-tua text-white flex items-center justify-center transition"
+        className={`w-10 h-10 rounded-lg ${info.tombol} text-white flex items-center justify-center transition`}
       >
         <Menu className="w-5 h-5" />
       </button>
@@ -161,7 +162,6 @@ export default function Topbar({ onToggle }: { onToggle: () => void }) {
 
           {bukaAkun && (
             <div className="absolute right-0 top-full mt-3 w-72 max-w-[90vw] bg-white border border-gray-200 rounded-xl shadow-xl overflow-hidden">
-              {/* Kartu profil */}
               <div className="flex items-center gap-3 px-4 py-4 border-b border-gray-100">
                 <div className={`w-12 h-12 rounded-full flex items-center justify-center shrink-0 ${pengguna.warna}`}>
                   <User className="w-6 h-6" />
@@ -172,27 +172,26 @@ export default function Topbar({ onToggle }: { onToggle: () => void }) {
                 </div>
               </div>
 
-              {/* Ganti akun */}
               <p className="px-4 pt-3 pb-1 text-xs font-semibold text-gray-500 uppercase tracking-wide">
                 Ganti Akun
               </p>
-              <ul className="pb-2">
-                {daftarPengguna.map((p) => (
-                  <li key={p.peran}>
+              <ul className="pb-2 max-h-60 overflow-y-auto">
+                {semuaAkun.map((a) => (
+                  <li key={a.id}>
                     <button
-                      onClick={() => pilihAkun(p.peran)}
+                      onClick={() => pilihAkun(a.id)}
                       className={`w-full flex items-center gap-3 px-4 py-2.5 text-left hover:bg-green-50 ${
-                        p.peran === pengguna.peran ? "bg-green-50/60" : ""
+                        a.id === pengguna.id ? "bg-green-50/60" : ""
                       }`}
                     >
-                      <div className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 ${p.warna}`}>
+                      <div className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 ${infoPeran[a.peran].warna}`}>
                         <User className="w-4 h-4" />
                       </div>
                       <div className="flex-1 min-w-0 leading-tight">
-                        <p className="text-sm font-medium text-gray-800 truncate">{p.jabatan}</p>
-                        <p className="text-xs text-gray-500 truncate">{p.nama}</p>
+                        <p className="text-sm font-medium text-gray-800 truncate">{infoPeran[a.peran].label}</p>
+                        <p className="text-xs text-gray-500 truncate">{a.nama}</p>
                       </div>
-                      {p.peran === pengguna.peran && (
+                      {a.id === pengguna.id && (
                         <Check className="w-4 h-4 text-hijau shrink-0" />
                       )}
                     </button>
@@ -200,7 +199,6 @@ export default function Topbar({ onToggle }: { onToggle: () => void }) {
                 ))}
               </ul>
 
-              {/* Logout */}
               <button
                 onClick={keluar}
                 className="w-full flex items-center gap-3 px-4 py-3 border-t border-gray-100 text-sm font-medium text-red-600 hover:bg-red-50"

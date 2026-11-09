@@ -1,9 +1,9 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import {
   House, Users, User, Mail, Send, Folder,
-  CloudUpload, Search, ChartColumn, LogOut,
+  CloudUpload, Search, ChartColumn, LogOut, UserCog,
 } from "lucide-react";
-import { usePengguna } from "../userStore";
+import { infoPeran, usePengguna } from "../userStore";
 
 const menu = [
   { to: "/dashboard", label: "Beranda", icon: House },
@@ -15,13 +15,14 @@ const menu = [
   { to: "/upload-dokumen", label: "Upload Dokumen", icon: CloudUpload },
   { to: "/cari-dokumen", label: "Cari Dokumen", icon: Search },
   { to: "/laporan-arsip", label: "Laporan Arsip", icon: ChartColumn },
+  { to: "/manajemen-user", label: "Manajemen User", icon: UserCog },
 ];
 
 export default function Sidebar({ open }: { open: boolean }) {
   const navigate = useNavigate();
   const pengguna = usePengguna();
+  const info = infoPeran[pengguna.peran];
 
-  // Hanya tampilkan menu yang boleh diakses peran ini
   const menuBoleh = menu.filter((m) => pengguna.menu.includes(m.to));
 
   return (
@@ -36,6 +37,14 @@ export default function Sidebar({ open }: { open: boolean }) {
           SISTEM INFORMASI <br /> PENGARSIPAN DOKUMEN
         </h2>
         <p className="mt-1 text-sm text-hijau-tua">TK Tunas Kintamani 2</p>
+
+        {/* Chip peran aktif */}
+        <div className={`mt-3 flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold ${info.badge}`}>
+          <span className={`w-5 h-5 rounded-full flex items-center justify-center ${info.warna}`}>
+            <User className="w-3 h-3" />
+          </span>
+          {info.label}
+        </div>
       </div>
 
       <hr className="mx-4 border-gray-100" />
@@ -47,7 +56,9 @@ export default function Sidebar({ open }: { open: boolean }) {
             to={item.to}
             className={({ isActive }) =>
               `flex items-center gap-3 px-4 py-2.5 rounded-lg font-medium transition ${
-                isActive ? "bg-hijau text-white" : "text-gray-700 hover:bg-green-50"
+                isActive
+                  ? `${info.tombol} text-white`
+                  : "text-gray-700 hover:bg-green-50"
               }`
             }
           >
